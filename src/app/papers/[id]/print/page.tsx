@@ -182,6 +182,15 @@ export default async function PrintPaperPage({ params }: Props) {
             margin-bottom: 8px;
           }
 
+          .question-image {
+            margin: 15px 0 15px 40px;
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            page-break-inside: avoid;
+          }
+
           .answer-space {
             margin: 10px 0 10px 40px;
             border-bottom: 1px dotted #999;
@@ -311,6 +320,14 @@ export default async function PrintPaperPage({ params }: Props) {
                       </div>
                     ))}
                   </div>
+                )}
+
+                {item.question.imageUrl && (
+                  <img
+                    src={item.question.imageUrl}
+                    alt="Question"
+                    className="question-image"
+                  />
                 )}
 
                 {item.question.passage && (

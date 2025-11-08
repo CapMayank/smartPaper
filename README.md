@@ -58,32 +58,50 @@ BETTER_AUTH_SECRET="your-secret-key-here"
 BETTER_AUTH_URL="http://localhost:3000"
 ```
 
-4. Run database migrations:
+4. Set up environment variables:
+Create a `.env` file in the root directory:
+```env
+DATABASE_URL="postgresql://localhost:5432/smartpaper"
+BETTER_AUTH_SECRET="your-secret-key-here"
+BETTER_AUTH_URL="http://localhost:3000"
+
+# Cloudinary Configuration (for image uploads)
+CLOUDINARY_CLOUD_NAME="your-cloud-name"
+CLOUDINARY_API_KEY="your-api-key"
+CLOUDINARY_API_SECRET="your-api-secret"
+```
+
+To set up Cloudinary:
+- Sign up for a free account at [https://cloudinary.com](https://cloudinary.com)
+- Go to your dashboard to find your Cloud Name, API Key, and API Secret
+- Add these credentials to your `.env` file
+
+5. Run database migrations:
 ```bash
 npm run db:migrate
 ```
 
-5. Generate Prisma client:
+6. Generate Prisma client:
 ```bash
 npm run db:generate
 ```
 
-6. Seed the database with sample data:
+7. Seed the database with sample data:
 ```bash
 npm run db:seed
 ```
 
-7. Create an admin user:
+8. Create an admin user:
 ```bash
 npm run create-admin
 ```
 
-8. Start the development server:
+9. Start the development server:
 ```bash
 npm run dev
 ```
 
-9. Open [http://localhost:3000](http://localhost:3000) in your browser.
+10. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ## Usage
 

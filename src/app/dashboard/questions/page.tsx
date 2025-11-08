@@ -24,6 +24,7 @@ import {
 import { toast } from "sonner";
 import { Plus, Search, FileQuestion } from "lucide-react";
 import { QuestionType, Language, Difficulty } from "@/lib/types";
+import ImageUpload from "@/components/image-upload";
 
 interface Question {
   id: string;
@@ -33,6 +34,7 @@ interface Question {
   difficulty: string;
   marks: number;
   tags: string[];
+  imageUrl?: string | null;
 }
 
 export default function QuestionsPage() {
@@ -52,6 +54,7 @@ export default function QuestionsPage() {
     difficulty: "MEDIUM",
     marks: 1,
     tags: [] as string[],
+    imageUrl: "",
   });
 
   useEffect(() => {
@@ -100,6 +103,7 @@ export default function QuestionsPage() {
           difficulty: "MEDIUM",
           marks: 1,
           tags: [],
+          imageUrl: "",
         });
         fetchQuestions();
       } else {
@@ -229,6 +233,23 @@ export default function QuestionsPage() {
                   />
                 </div>
               </div>
+              
+              {/* Image Upload - for IMAGE_QUESTION type or optional for all */}
+              <div>
+                <ImageUpload
+                  onUploadComplete={(url) =>
+                    setFormData({ ...formData, imageUrl: url })
+                  }
+                  currentImageUrl={formData.imageUrl}
+                  label="Question Image (Optional)"
+                />
+                {formData.type === "IMAGE_QUESTION" && !formData.imageUrl && (
+                  <p className="text-xs text-amber-600 mt-1">
+                    Image is recommended for IMAGE_QUESTION type
+                  </p>
+                )}
+              </div>
+              
               <div className="flex justify-end space-x-2">
                 <Button
                   type="button"
@@ -302,9 +323,20 @@ export default function QuestionsPage() {
         {questions.map((question) => (
           <Card key={question.id}>
             <CardContent className="pt-6">
-              <div className="flex justify-between items-start">
+              <div className="flex justify-between items-start gap-4">
                 <div className="flex-1">
                   <p className="text-sm font-medium mb-2">{question.text}</p>
+                  
+                  {question.imageUrl && (
+                    <div className="my-3">
+                      <img
+                        src={question.imageUrl}
+                        alt="Question"
+                        className="max-w-md h-auto rounded border"
+                      />
+                    </div>
+                  )}
+                  
                   <div className="flex gap-2 flex-wrap">
                     <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded">
                       {question.type.replace(/_/g, " ")}
