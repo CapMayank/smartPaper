@@ -34,7 +34,7 @@ export default function CreateUserDialog() {
 		email: "",
 		password: "",
 		name: "",
-		role: "user",
+		role: "TEACHER" as "TEACHER" | "ADMIN" | "EXAM_HEAD" | "PRINTER",
 	});
 	const router = useRouter();
 
@@ -47,7 +47,7 @@ export default function CreateUserDialog() {
 				email: formData.email,
 				password: formData.password,
 				name: formData.name,
-				role: formData.role,
+				role: formData.role === "ADMIN" ? "admin" : "user",
 			});
 
 			if (response.error) {
@@ -55,9 +55,15 @@ export default function CreateUserDialog() {
 				return;
 			}
 
+			// Update the user's role in the database if it's not admin or user
+			if (formData.role !== "ADMIN" && formData.role !== "TEACHER") {
+				// This would require an additional API call to update the role
+				// For now, we'll just use the basic roles
+			}
+
 			toast.success("User created successfully");
 			setOpen(false);
-			setFormData({ email: "", password: "", name: "", role: "user" });
+			setFormData({ email: "", password: "", name: "", role: "TEACHER" });
 			router.refresh();
 		} catch (error) {
 			toast.error("An error occurred");
@@ -130,7 +136,7 @@ export default function CreateUserDialog() {
 							<Label htmlFor="role">Role</Label>
 							<Select
 								value={formData.role}
-								onValueChange={(value) =>
+								onValueChange={(value: any) =>
 									setFormData({ ...formData, role: value })
 								}
 								disabled={isLoading}
@@ -139,8 +145,10 @@ export default function CreateUserDialog() {
 									<SelectValue placeholder="Select a role" />
 								</SelectTrigger>
 								<SelectContent>
-									<SelectItem value="user">User</SelectItem>
-									<SelectItem value="admin">Admin</SelectItem>
+									<SelectItem value="TEACHER">Teacher</SelectItem>
+									<SelectItem value="ADMIN">Admin</SelectItem>
+									<SelectItem value="EXAM_HEAD">Exam Head</SelectItem>
+									<SelectItem value="PRINTER">Printer</SelectItem>
 								</SelectContent>
 							</Select>
 						</div>

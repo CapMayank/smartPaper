@@ -22,7 +22,7 @@ interface User {
 	id: string;
 	email: string;
 	name: string | null;
-	role: string;
+	role?: string | null | undefined;
 }
 
 interface Session {
@@ -51,7 +51,7 @@ export default function DashboardNav({ session }: DashboardNavProps) {
 		}
 	};
 
-	const isAdmin = session.user.role === "admin";
+	const isAdmin = session.user.role === "ADMIN" || session.user.role === "admin";
 
 	return (
 		<nav className="bg-white shadow-sm border-b">
