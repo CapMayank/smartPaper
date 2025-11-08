@@ -175,12 +175,12 @@ export default function PaperDetailPage() {
               Finalize Paper
             </Button>
           )}
-          {paper.finalized && (
-            <Button variant="default">
-              <Download className="h-4 w-4 mr-2" />
-              Download PDF
+          <Link href={`/papers/${paper.id}/print`} target="_blank">
+            <Button variant="outline">
+              <Printer className="h-4 w-4 mr-2" />
+              Print / PDF
             </Button>
-          )}
+          </Link>
         </div>
       </div>
 
