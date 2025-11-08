@@ -22,7 +22,7 @@ interface User {
 	id: string;
 	email: string;
 	name: string | null;
-	role: string;
+	role?: string | null | undefined;
 }
 
 interface Session {
@@ -51,7 +51,7 @@ export default function DashboardNav({ session }: DashboardNavProps) {
 		}
 	};
 
-	const isAdmin = session.user.role === "admin";
+	const isAdmin = session.user.role === "ADMIN" || session.user.role === "admin";
 
 	return (
 		<nav className="bg-white shadow-sm border-b">
@@ -59,13 +59,37 @@ export default function DashboardNav({ session }: DashboardNavProps) {
 				<div className="flex justify-between h-16">
 					<div className="flex items-center space-x-8">
 						<h1 className="text-xl font-bold">smartPaper</h1>
-						<div className="hidden md:flex space-x-4">
+						<div className="hidden md:flex space-x-2">
 							<Link href="/dashboard">
-								<Button variant="ghost">Dashboard</Button>
+								<Button variant="ghost" size="sm">Dashboard</Button>
+							</Link>
+							<Link href="/dashboard/sessions">
+								<Button variant="ghost" size="sm">Sessions</Button>
+							</Link>
+							<Link href="/dashboard/exam-groups">
+								<Button variant="ghost" size="sm">Exams</Button>
+							</Link>
+							<Link href="/dashboard/classes">
+								<Button variant="ghost" size="sm">Classes</Button>
+							</Link>
+							<Link href="/dashboard/subjects">
+								<Button variant="ghost" size="sm">Subjects</Button>
+							</Link>
+							<Link href="/dashboard/books">
+								<Button variant="ghost" size="sm">Books</Button>
+							</Link>
+							<Link href="/dashboard/questions">
+								<Button variant="ghost" size="sm">Questions</Button>
+							</Link>
+							<Link href="/dashboard/blueprints">
+								<Button variant="ghost" size="sm">Blueprints</Button>
+							</Link>
+							<Link href="/dashboard/papers">
+								<Button variant="ghost" size="sm">Papers</Button>
 							</Link>
 							{isAdmin && (
 								<Link href="/dashboard/users">
-									<Button variant="ghost">Users</Button>
+									<Button variant="ghost" size="sm">Users</Button>
 								</Link>
 							)}
 						</div>

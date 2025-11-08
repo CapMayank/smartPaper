@@ -1,4 +1,3 @@
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -16,13 +15,15 @@ model User {
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   image         String?
-  role          String    @default("user")
+  role          String    @default("TEACHER") // ADMIN, TEACHER, EXAM_HEAD, PRINTER
   banned        Boolean   @default(false)
   banReason     String?
   banExpires    DateTime?
 
-  accounts Account[]
-  sessions Session[]
+  accounts   Account[]
+  sessions   Session[]
+  papers     Paper[]
+  blueprints Blueprint[]
 
   @@map("user")
 }
@@ -73,4 +74,216 @@ model Verification {
   updatedAt  DateTime @updatedAt
 
   @@map("verification")
+}
+
+// SmartPaper Models
+
+// Academic Session (e.g., 2024-25)
+model AcademicSession {
+  id        String   @id @default(cuid())
+  name      String   @unique // e.g., "2024-25"
+  startYear Int
+  endYear   Int
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  examGroups ExamGroup[]
+
+  @@map("academic_session")
+}
+
+// Exam Type/Group (Quarterly, Half-Yearly, Annual)
+model ExamGroup {
+  id        String          @id @default(cuid())
+  name      String // e.g., "Quarterly", "Half-Yearly", "Annual"
+  sessionId String
+  session   AcademicSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+
+  papers Paper[]
+
+  @@unique([sessionId, name])
+  @@map("exam_group")
+}
+
+// Class (1-12)
+model Class {
+  id        String   @id @default(cuid())
+  name      String   @unique // e.g., "1", "2", ..., "12"
+  order     Int      @unique // For sorting
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  subjects Subject[]
+  papers   Paper[]
+
+  @@map("class")
+}
+
+// Subject
+model Subject {
+  id        String   @id @default(cuid())
+  name      String // e.g., "Hindi", "English", "Mathematics"
+  classId   String
+  class     Class    @relation(fields: [classId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  books  Book[]
+  papers Paper[]
+
+  @@unique([classId, name])
+  @@map("subject")
+}
+
+// Book
+model Book {
+  id        String   @id @default(cuid())
+  name      String
+  subjectId String
+  subject   Subject  @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  chapters  Chapter[]
+  questions Question[]
+
+  @@unique([subjectId, name])
+  @@map("book")
+}
+
+// Chapter
+model Chapter {
+  id        String   @id @default(cuid())
+  name      String
+  order     Int
+  bookId    String
+  book      Book     @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  topics    Topic[]
+  questions Question[]
+
+  @@unique([bookId, order])
+  @@map("chapter")
+}
+
+// Topic
+model Topic {
+  id        String   @id @default(cuid())
+  name      String
+  chapterId String
+  chapter   Chapter  @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  questions Question[]
+
+  @@map("topic")
+}
+
+// Question
+model Question {
+  id         String   @id @default(cuid())
+  text       String   @db.Text
+  type       String // MCQ, FILL_IN_THE_BLANKS, TRUE_FALSE, MATCH_THE_FOLLOWING, ONE_WORD, NUMERICAL, SHORT_ANSWER, LONG_ANSWER, UNSEEN_PASSAGE, POEM_EXPLANATION, IMAGE_QUESTION
+  language   String   @default("ENGLISH") // ENGLISH, HINDI, SANSKRIT
+  difficulty String   @default("MEDIUM") // EASY, MEDIUM, HARD
+  marks      Int
+  tags       String[] @default([])
+
+  // For MCQ type
+  options       String[] @default([])
+  correctAnswer String?
+
+  // For image questions
+  imageUrl String?
+
+  // For unseen passage
+  passage      String?  @db.Text
+  subQuestions String[] @default([])
+
+  // Relationships
+  bookId    String?
+  book      Book?    @relation(fields: [bookId], references: [id], onDelete: SetNull)
+  chapterId String?
+  chapter   Chapter? @relation(fields: [chapterId], references: [id], onDelete: SetNull)
+  topicId   String?
+  topic     Topic?   @relation(fields: [topicId], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  paperItems PaperItem[]
+
+  @@map("question")
+}
+
+// Blueprint - Template for paper structure
+model Blueprint {
+  id          String   @id @default(cuid())
+  name        String
+  description String?  @db.Text
+  sections    Json // Array of section definitions with type, count, marks
+  createdById String
+  createdBy   User     @relation(fields: [createdById], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  papers Paper[]
+
+  @@map("blueprint")
+}
+
+// Paper
+model Paper {
+  id          String    @id @default(cuid())
+  title       String
+  examGroupId String
+  examGroup   ExamGroup @relation(fields: [examGroupId], references: [id], onDelete: Cascade)
+  classId     String
+  class       Class     @relation(fields: [classId], references: [id], onDelete: Cascade)
+  subjectId   String
+  subject     Subject   @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+
+  blueprintId String?
+  blueprint   Blueprint? @relation(fields: [blueprintId], references: [id], onDelete: SetNull)
+
+  maxMarks     Int
+  duration     Int // in minutes
+  instructions String? @db.Text
+
+  finalized   Boolean   @default(false)
+  finalizedAt DateTime?
+
+  createdById String
+  createdBy   User     @relation(fields: [createdById], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  paperItems PaperItem[]
+
+  @@map("paper")
+}
+
+// PaperItem - Questions in a paper with section info
+model PaperItem {
+  id         String   @id @default(cuid())
+  paperId    String
+  paper      Paper    @relation(fields: [paperId], references: [id], onDelete: Cascade)
+  questionId String
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  sectionName String // e.g., "Section A", "Section B"
+  order       Int // Position within section
+  marks       Int? // Can override question marks
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([paperId, sectionName, order])
+  @@map("paper_item")
 }

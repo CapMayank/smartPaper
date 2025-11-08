@@ -47,9 +47,12 @@ export default function UsersTable({ users, currentUserId }: UsersTableProps) {
 	const handleRoleChange = async (userId: string, newRole: string) => {
 		setLoading(userId);
 		try {
+			// Map custom roles to auth client roles
+			const authRole = newRole === "ADMIN" ? "admin" : "user";
+			
 			const response = await authClient.admin.setRole({
 				userId,
-				role: newRole,
+				role: authRole as "admin" | "user",
 			});
 
 			if (response.error) {

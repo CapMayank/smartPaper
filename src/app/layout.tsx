@@ -1,15 +1,12 @@
 /** @format */
 
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 
-const inter = Inter({ subsets: ["latin"] });
-
 export const metadata: Metadata = {
-	title: "Admin Dashboard",
-	description: "Secure admin dashboard with Better Auth",
+	title: "SmartPaper - Exam Paper Management",
+	description: "Create and manage exam papers for schools",
 };
 
 export default function RootLayout({
@@ -19,7 +16,7 @@ export default function RootLayout({
 }) {
 	return (
 		<html lang="en">
-			<body className={inter.className}>
+			<body className="font-sans antialiased">
 				{children}
 				<Toaster />
 			</body>
