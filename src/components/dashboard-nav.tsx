@@ -81,6 +81,9 @@ export default function DashboardNav({ session }: DashboardNavProps) {
 							<Link href="/dashboard/questions">
 								<Button variant="ghost" size="sm">Questions</Button>
 							</Link>
+							<Link href="/dashboard/blueprints">
+								<Button variant="ghost" size="sm">Blueprints</Button>
+							</Link>
 							<Link href="/dashboard/papers">
 								<Button variant="ghost" size="sm">Papers</Button>
 							</Link>
