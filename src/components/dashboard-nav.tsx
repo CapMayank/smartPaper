@@ -63,6 +63,18 @@ export default function DashboardNav({ session }: DashboardNavProps) {
 							<Link href="/dashboard">
 								<Button variant="ghost">Dashboard</Button>
 							</Link>
+							<Link href="/dashboard/sessions">
+								<Button variant="ghost">Sessions</Button>
+							</Link>
+							<Link href="/dashboard/classes">
+								<Button variant="ghost">Classes</Button>
+							</Link>
+							<Link href="/dashboard/questions">
+								<Button variant="ghost">Questions</Button>
+							</Link>
+							<Link href="/dashboard/papers">
+								<Button variant="ghost">Papers</Button>
+							</Link>
 							{isAdmin && (
 								<Link href="/dashboard/users">
 									<Button variant="ghost">Users</Button>
